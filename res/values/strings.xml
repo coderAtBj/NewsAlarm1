@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NewsAlarm</string>
+    <string name="details_alarm_name">Alarm Name</string>
+    <string name="details_repeat_weekly">Repeat Weekly</string>
+    <string name="details_sunday">Sunday</string>
+    <string name="details_monday">Monday</string>
+    <string name="details_tuesday">Tuesday</string>
+    <string name="details_wednesday">Wednesday</string>
+    <string name="details_thursday">Thursday</string>
+    <string name="details_friday">Friday</string>
+    <string name="details_saturday">Saturday</string>
+    <string name="details_alarm_tone">Alarm Tone</string>
+    <string name="details_alarm_tone_default">Select an alarm tone</string>
+    
+    <string name="add_alarm">新建</string>
+    <string name="alarm_list">列表</string>
+    <string name="save_alarm">保存</string>
+    
+</resources>
