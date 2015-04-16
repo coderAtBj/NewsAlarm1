@@ -74,11 +74,29 @@ public class AlarmListActivity extends ListActivity implements OnClickListener {
 				this.finish();
 				break;
 			case R.id.imv_add_alarm:
-				AlarmDetailsActivity.startActivity(this, -1);
+				startAlarmDetailActivity(-1);
 				break;
 			default:
 				break;
 		}
+	}
+	
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	// TODO Auto-generated method stub
+    	super.onActivityResult(requestCode, resultCode, data);
+    	
+    	if (resultCode == RESULT_OK) {
+    		mAdapter.setAlarms(dbHelper.getAlarms());
+    		mAdapter.notifyDataSetChanged();
+    	}
+    }
+	
+	private void startAlarmDetailActivity(long id) {
+		Intent intent = new Intent();
+		intent.setClass(this, AlarmDetailsActivity.class);
+		intent.putExtra("id", id);
+		this.startActivityForResult(intent, 0);
 	}
 
 	private void setupActionBar() {
