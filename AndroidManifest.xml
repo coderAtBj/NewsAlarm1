@@ -37,6 +37,11 @@
             android:screenOrientation="portrait"
             />
         
+        <activity 
+            android:name="com.sina.alarm.ui.NewsContentActivity"
+            android:screenOrientation="portrait"
+            />
+        
         <service android:name="com.sina.alarm.service.AlarmService"
             android:enabled="true" />
         
