@@ -11,8 +11,8 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,17 +47,25 @@ public class AlarmDetailsActivity extends Activity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		requestWindowFeature(Window.FEATURE_ACTION_BAR);
 		setContentView(R.layout.activity_details);
-		
-		getActionBar().setTitle("Create New Alarm");
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
 		initViews();
 		initData();
 	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	     switch (item.getItemId()) {
+	        case android.R.id.home:
+	            this.finish();
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+	
 	private void initViews() {
+		getActionBar().setTitle("Create New Alarm");
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		timePicker = (TimePicker) findViewById(R.id.alarm_details_time_picker);
 		editName = (EditText) findViewById(R.id.alarm_details_name);
 		chkWeekly = (CustomSwitch) findViewById(R.id.alarm_details_repeat_weekly);

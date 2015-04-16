@@ -1,6 +1,7 @@
 package com.sina.alarm.ui;
 
 import com.sina.alarm.R;
+import com.sina.alarm.db.AlarmDBHelper;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,7 +10,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class MainActivity extends Activity implements OnClickListener {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

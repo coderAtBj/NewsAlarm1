@@ -107,8 +107,7 @@ public class AlarmListAdapter extends BaseAdapter {
 			@Override
 			public boolean onLongClick(View v) {
 				Log.i(null, "abc1223");
-				// TODO Auto-generated method stub
-//				((MainActivity) mContext).deleteAlarm(model.id);
+				((AlarmListActivity) mContext).deleteAlarm(model.id);
 				return true;
 			}
 		});
