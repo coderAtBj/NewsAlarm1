@@ -11,11 +11,11 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -50,22 +50,24 @@ public class AlarmDetailsActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_details);
 		initViews();
 		initData();
+		setupActionBar();
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	     switch (item.getItemId()) {
-	        case android.R.id.home:
-	            this.finish();
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
+	private void setupActionBar() {
+    	ImageView imv = (ImageView)this.findViewById(R.id.imv_back);
+    	imv.setOnClickListener(this);
+    	
+    	imv = (ImageView)this.findViewById(R.id.imv_alarm);
+    	imv.setVisibility(View.GONE);
+    	
+    	imv = (ImageView)this.findViewById(R.id.imv_settings);
+    	imv.setVisibility(View.GONE);
+    	
+    	TextView tv = (TextView)this.findViewById(R.id.tv_actionbar_title);
+    	tv.setText(R.string.add_alarm);
+    }
 	
 	private void initViews() {
-		getActionBar().setTitle("Create New Alarm");
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
 		timePicker = (TimePicker) findViewById(R.id.alarm_details_time_picker);
 		editName = (EditText) findViewById(R.id.alarm_details_name);
 		chkWeekly = (CustomSwitch) findViewById(R.id.alarm_details_repeat_weekly);
@@ -128,6 +130,9 @@ public class AlarmDetailsActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
+		case R.id.imv_back:
+			this.finish();
+			break;
 		case R.id.btn_save_alarm:
 			saveAlarm();
 			break;

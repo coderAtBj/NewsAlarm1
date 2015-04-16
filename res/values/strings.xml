@@ -18,4 +18,6 @@
     <string name="alarm_list">列表</string>
     <string name="save_alarm">保存</string>
     
+    <string name="default_desc">place hoder</string>
+    
 </resources>

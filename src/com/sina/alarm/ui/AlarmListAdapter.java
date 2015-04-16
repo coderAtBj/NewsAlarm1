@@ -6,8 +6,6 @@ import com.sina.alarm.R;
 import com.sina.alarm.db.AlarmModel;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -75,7 +73,6 @@ public class AlarmListAdapter extends BaseAdapter {
 			viewholder.btnToggle = (ToggleButton) view.findViewById(R.id.alarm_item_toogle);
 			
 			view.setTag(viewholder);
-			
 		}else{
 			viewholder = (ViewHolder) view.getTag();
 		}
@@ -88,8 +85,7 @@ public class AlarmListAdapter extends BaseAdapter {
 		viewholder.btnToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
-//				((MainActivity) mContext).setAlarmEnabled(Long.valueOf(model.id), isChecked);
+				((AlarmListActivity) mContext).setAlarmEnabled(Long.valueOf(model.id), isChecked);
 			}
 		});
 		viewholder.btnToggle.setChecked(model.isEnabled);
@@ -98,7 +94,7 @@ public class AlarmListAdapter extends BaseAdapter {
 			
 			@Override
 			public void onClick(View view) {
-//				((MainActivity) mContext).startAlarmDetailsActivity(Long.valueOf(model.id));
+				AlarmDetailsActivity.startActivity(mContext, Long.valueOf(model.id));
 			}
 		});
 		
@@ -106,7 +102,6 @@ public class AlarmListAdapter extends BaseAdapter {
 			
 			@Override
 			public boolean onLongClick(View v) {
-				Log.i(null, "abc1223");
 				((AlarmListActivity) mContext).deleteAlarm(model.id);
 				return true;
 			}
@@ -114,15 +109,7 @@ public class AlarmListAdapter extends BaseAdapter {
 		
 		return view;
 	}
-	
-	private void updateTextColor(TextView view, boolean isOn){
-		if (isOn) {
-			view.setTextColor(Color.GREEN);
-		} else {
-			view.setTextColor(Color.BLACK);
-		}
-	}
-	
+
 	private class ViewHolder {
 		TextView txtTime;
 		TextView txtName;

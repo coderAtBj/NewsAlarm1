@@ -1,13 +1,13 @@
 package com.sina.alarm.ui;
 
 import com.sina.alarm.R;
-import com.sina.alarm.db.AlarmDBHelper;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 
 public class MainActivity extends Activity implements OnClickListener {
     @Override
@@ -15,6 +15,7 @@ public class MainActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        setupActionBar();
     }
     
     private void initView() {
@@ -23,6 +24,13 @@ public class MainActivity extends Activity implements OnClickListener {
     	
     	btn = (Button)this.findViewById(R.id.btn_alarm_list);
     	btn.setOnClickListener(this);
+    }
+    
+    private void setupActionBar() {
+    	ImageView imv = (ImageView)this.findViewById(R.id.imv_back);
+    	imv.setVisibility(View.GONE);
+    	
+    	
     }
 
 	@Override
