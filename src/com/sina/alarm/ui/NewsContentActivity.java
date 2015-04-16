@@ -10,33 +10,30 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class NewsContentActivity extends Activity implements OnClickListener {
 	public static void startActivity(Context ctx) {
 		Intent intent = new Intent();
-		intent.setClass(ctx, MainActivity.class);
-		if (!(ctx instanceof Activity)) {
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		}
+		intent.setClass(ctx, NewsContentActivity.class);
 		ctx.startActivity(intent);
 	}
 	
-    @Override
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initView();
+        
+        setContentView(R.layout.activity_news_content);
         setupActionBar();
-    }
-    
-    private void initView() {
-    	//TODO:
-    }
-    
-    private void setupActionBar() {
+	}
+	
+	private void setupActionBar() {
     	ImageView imv = (ImageView)this.findViewById(R.id.imv_back);
     	imv.setVisibility(View.GONE);
     	
     	imv = (ImageView)this.findViewById(R.id.imv_alarm);
+    	imv.setVisibility(View.GONE);
+    	
+    	imv = (ImageView)this.findViewById(R.id.imv_share);
+    	imv.setVisibility(View.VISIBLE);
     	imv.setOnClickListener(this);
     	
     	imv = (ImageView)this.findViewById(R.id.imv_settings);
@@ -46,15 +43,15 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-		case R.id.imv_alarm:
-			AlarmListActivity.startActvity(this);
-			break;
 		case R.id.imv_settings:
-			//TODO: tempory here.
-			NewsContentActivity.startActivity(this);
+			//TODO:
 			break;
+		case R.id.imv_share:
+			break;
+
 		default:
 			break;
 		}
+		
 	}
 }

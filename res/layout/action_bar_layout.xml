@@ -35,6 +35,18 @@
 	    />
 	
 	<ImageView 
+	    android:id="@+id/imv_share"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:padding="10dp"
+	    android:src="@drawable/ic_share"
+	    android:layout_toLeftOf="@+id/imv_settings"
+	    android:layout_centerVertical="true"
+		android:contentDescription="@string/default_desc"
+		android:visibility="gone"
+	    />
+	
+	<ImageView 
 	    android:id="@+id/imv_settings"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
@@ -43,18 +55,6 @@
 	    android:layout_centerVertical="true"
 	    android:layout_alignParentRight="true"
 		android:contentDescription="@string/default_desc"
-	    />
-	
-	<ImageView 
-	    android:id="@+id/imv_share"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:padding="10dp"
-	    android:src="@drawable/ic_share"
-	    android:layout_alignParentRight="true"
-	    android:layout_centerVertical="true"
-		android:contentDescription="@string/default_desc"
-		android:visibility="gone"
 	    />
 	
 	<ImageView 
