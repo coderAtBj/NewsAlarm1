@@ -73,6 +73,9 @@ public class AlarmListActivity extends ListActivity implements OnClickListener {
 			case R.id.imv_back:
 				this.finish();
 				break;
+			case R.id.imv_add_alarm:
+				AlarmDetailsActivity.startActivity(this, -1);
+				break;
 			default:
 				break;
 		}
@@ -87,6 +90,10 @@ public class AlarmListActivity extends ListActivity implements OnClickListener {
     	
     	imv = (ImageView)this.findViewById(R.id.imv_settings);
     	imv.setVisibility(View.GONE);
+    	
+    	imv = (ImageView)this.findViewById(R.id.imv_add_alarm);
+    	imv.setVisibility(View.VISIBLE);
+    	imv.setOnClickListener(this);
     	
     	TextView tv = (TextView)this.findViewById(R.id.tv_actionbar_title);
     	tv.setText(R.string.alarm_list);

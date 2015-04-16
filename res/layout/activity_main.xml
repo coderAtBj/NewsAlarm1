@@ -17,19 +17,6 @@
         android:layout_height="match_parent"
         android:layout_below="@id/action_bar"
         >
-
-        <Button
-            android:id="@+id/btn_add_alarm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_alarm" />
-
-        <Button
-            android:id="@+id/btn_alarm_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/btn_add_alarm"
-            android:text="@string/alarm_list" />
         
     </RelativeLayout>
 
