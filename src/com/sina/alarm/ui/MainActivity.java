@@ -25,19 +25,26 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sina.alarm.R;
+import com.sina.alarm.app.AppLauncher;
 import com.sina.alarm.app.Constants;
 import com.sina.alarm.bean.AudioNewsItem;
 import com.sina.alarm.model.MediaManager;
 import com.sina.alarm.model.MediaManager.OnProgressChangeListener;
+import com.sina.alarm.sensor.ShakeListener;
+import com.sina.alarm.sensor.ShakeListener.OnShakeListener;
 import com.sina.alarm.ui.adapter.AudioListAdapter;
 import com.sina.alarm.util.Util;
 
 public class MainActivity extends Activity implements OnClickListener, OnItemClickListener,
-        OnCompletionListener, OnProgressChangeListener {
+        OnCompletionListener, OnProgressChangeListener, OnShakeListener {
 
     private Map<Class<?>, State> mStatePool = new HashMap<Class<?>, State>();
 
     abstract public class State {
+
+        public State() {
+            onActivate();
+        }
 
         /**
          * 每次进入该状态时调用
@@ -83,6 +90,9 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             mDescriptionView.setText(spannable);
         }
 
+        public void onShake() {
+        }
+
         /**
          * Activity销毁事件
          */
@@ -101,19 +111,18 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         final protected void nextState(Class<? extends State> stateClass) {
             if (mStatePool.containsKey(stateClass)) {
                 mState = mStatePool.get(stateClass);
-            } else {
-
-                try {
-                    Constructor<? extends State> constructor = stateClass
-                            .getConstructor(MainActivity.class);
-                    mState = constructor.newInstance(MainActivity.this);
-                    mStatePool.put(stateClass, mState);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                mState.onActivate();
+                return;
             }
 
-            mState.onActivate();
+            try {
+                Constructor<? extends State> constructor = stateClass
+                        .getConstructor(MainActivity.class);
+                mState = constructor.newInstance(MainActivity.this);
+                mStatePool.put(stateClass, mState);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         /**
@@ -156,6 +165,12 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             }
         }
 
+        @Override
+        public void onShake() {
+            super.onShake();
+            playNext();
+        }
+
     }
 
     public class PausingState extends State {
@@ -185,8 +200,11 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     }
 
     public class ReadyState extends State {
-        public ReadyState() {
+
+        @Override
+        public void onActivate() {
             mPlayButton.setImageResource(R.drawable.ic_play_big);
+            // TODO: play ring
         }
 
         @Override
@@ -202,6 +220,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     private List<AudioNewsItem> mItems;
     private AudioNewsItem mCurrentItem;
     private MediaManager mPlayer;
+    private ShakeListener mShakeListener;
 
     private TextView mTitleView;
     private TextView mDescriptionView;
@@ -266,34 +285,58 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     }
 
     private void initData() {
+        mHandler = new Handler();
+
+        mShakeListener = new ShakeListener(this);
+        mShakeListener.setOnShakeListener(this);
+
         mPlayer = MediaManager.getInstance();
         mPlayer.setOnCompletionListener(this);
         mPlayer.setOnProgressChangeListener(this);
 
-        mHandler = new Handler();
-
-        mItems = new ArrayList<AudioNewsItem>();
-
-        mItems.add(new AudioNewsItem(1, R.raw.audio_1, "李嘉诚15亿捐建寺庙曝光 每天公供400人参观",
-                "李嘉诚15亿捐建寺庙曝光，每天公供400人参观...", ""));
-        mItems.add(new AudioNewsItem(2, R.raw.audio_2, "中日韩将提出共同观测PM2.5", "中日韩将提出共同观测PM2.5...", ""));
-        mItems.add(new AudioNewsItem(3, R.raw.audio_3, "浙江省温州市副市长孔海龙接受组织调查",
-                "浙江省温州市副市长孔海龙接受组织调查...", ""));
-        mItems.add(new AudioNewsItem(4, R.raw.audio_4, "菲总统称中国对南海主权声索引发恐惧 中方回应",
-                "菲总统称中国对南海主权声索引发恐惧，中方回应...", ""));
+        mItems = new ArrayList<AudioNewsItem>(AppLauncher.getNewsItems());
     }
 
-    @Override
-    public void onCompletion(MediaPlayer mp) {
+    public void playNext() {
+        playNext(true);
+    }
+
+    /**
+     * 播放下一首
+     * 
+     * @param loop 播放到最后一道时是否循环
+     */
+    public void playNext(boolean loop) {
         int nextIndex = mItems.indexOf(mCurrentItem) + 1;
+        if (loop) {
+            nextIndex %= mItems.size();
+        }
+
         if (nextIndex < mItems.size()) {
             mState.onSelectItem(mItems.get(nextIndex));
         }
     }
 
     @Override
+    public void onCompletion(MediaPlayer mp) {
+        playNext(false);
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         mState.onSelectItem((AudioNewsItem) view.getTag());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mShakeListener.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mShakeListener.pause();
     }
 
     @Override
@@ -309,7 +352,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
                 AlarmListActivity.startActvity(this);
                 break;
             case R.id.imv_settings:
-            	SettingsActivity.startActivity(this);
+                SettingsActivity.startActivity(this);
                 break;
             default:
                 break;
@@ -328,5 +371,22 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
                 mState.onProgressChange();
             }
         });
+    }
+
+    @Override
+    public void onShake() {
+        mState.onShake();
+    }
+
+    @Override
+    public void onFaceUp() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onFaceDown() {
+        // TODO Auto-generated method stub
+        
     }
 }
