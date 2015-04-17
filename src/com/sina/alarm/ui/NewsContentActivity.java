@@ -27,6 +27,7 @@ public class NewsContentActivity extends Activity implements OnClickListener, On
 	private int mNewsId;
 	private AudioNewsItem mNewsItem;
 	
+	private TextView mNewsTitleView;
 	private TextView mNewsContentView;
 	private TextView mPlayProgress;
 	private TextView mPlayDuration;
@@ -44,6 +45,7 @@ public class NewsContentActivity extends Activity implements OnClickListener, On
 	}
 	
 	private void initView() {
+		mNewsTitleView = (TextView)this.findViewById(R.id.tv_news_title);
 		mNewsContentView = (TextView)this.findViewById(R.id.tv_news_content);
 		mPlayProgress = (TextView)this.findViewById(R.id.tv_played_time);
 		mPlayDuration = (TextView)this.findViewById(R.id.tv_total_time);
@@ -77,7 +79,8 @@ public class NewsContentActivity extends Activity implements OnClickListener, On
 			return;
 		}
 		
-		mNewsContentView.setText(mNewsItem.getTitle() + "\n\n" + mNewsItem.getContent());
+		mNewsTitleView.setText(mNewsItem.getTitle());
+		mNewsContentView.setText(mNewsItem.getContent());
 	}
 
 	@Override
