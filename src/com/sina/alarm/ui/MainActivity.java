@@ -11,10 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +34,7 @@ import com.sina.alarm.model.MediaManager;
 import com.sina.alarm.model.MediaManager.OnProgressChangeListener;
 import com.sina.alarm.sensor.ShakeListener;
 import com.sina.alarm.sensor.ShakeListener.OnShakeListener;
+import com.sina.alarm.service.AlarmManagerHelper;
 import com.sina.alarm.ui.adapter.AudioListAdapter;
 import com.sina.alarm.util.Util;
 
@@ -148,7 +151,11 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         @Override
         public void onActivate() {
             mPlayButton.setImageResource(R.drawable.ic_play_big);
-            // TODO: play ring
+//            if (mToneUri != null) {
+//            	mPlayer.setDataSource(MainActivity.this.getApplicationContext(), mToneUri);
+//            	mPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+//            	mPlayer.start();
+//			}
         }
 
         @Override
@@ -240,6 +247,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     }
 
     private State mState;
+    private Uri mToneUri;
     private List<AudioNewsItem> mItems;
     private AudioNewsItem mCurrentItem;
     private MediaManager mPlayer;
@@ -255,10 +263,11 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 
     private Handler mHandler;
 
-    public static void startActivity(Context ctx, long newsId) {
+    public static void startActivity(Context ctx, long newsId, String toneUri) {
         Intent intent = new Intent();
         intent.setClass(ctx, MainActivity.class);
         intent.putExtra(Constants.sNewsIdKey, newsId);
+        intent.putExtra(AlarmManagerHelper.TONE, toneUri);
         if (!(ctx instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
@@ -311,6 +320,10 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         mPlayer = MediaManager.getInstance();
 
         mItems = new ArrayList<AudioNewsItem>(AppLauncher.getNewsItems());
+        String toneStr = getIntent().getStringExtra(AlarmManagerHelper.TONE);
+        if (!TextUtils.isEmpty(toneStr)) {
+        	mToneUri =  Uri.parse(toneStr);
+		}
     }
 
     public void playNext() {
