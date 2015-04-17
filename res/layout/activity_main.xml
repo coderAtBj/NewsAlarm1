@@ -2,10 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sina.alarm.ui.MainActivity"
-    android:background="#ffffff" >
-     
-    <include 
+    android:background="#ffffff"
+    tools:context="com.sina.alarm.ui.MainActivity" >
+
+    <include
         android:id="@+id/action_bar"
         layout="@layout/action_bar_layout" />
 
@@ -55,17 +55,24 @@
 
                 <ImageView
                     android:id="@+id/iv_wave"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_wave" />
 
-                <ImageView
-                    android:id="@+id/iv_play_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_play_big" />
+                <RelativeLayout
+                    android:id="@+id/iv_play_button_backing"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true" >
+
+                    <ImageView
+                        android:id="@+id/iv_play_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="130dp"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_play_big" />
+                </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout

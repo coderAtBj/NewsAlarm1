@@ -9,6 +9,13 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
@@ -150,6 +157,38 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         protected void updateProgress() {
             mPlayProgress.setText(mPlayer.getProgressString());
             mPlayDuration.setText(mPlayer.getDurationString());
+
+            updatePlayButtonBacking();
+        }
+
+        @SuppressWarnings("deprecation")
+        private void updatePlayButtonBacking() {
+            int startAngle = 270;
+            int sweepAngle = (int) (360.0 * mPlayer.getProgress() / mPlayer.getDuration());
+
+            int width = mPlayButtonBacking.getWidth();
+            int height = mPlayButtonBacking.getHeight();
+
+            if (width <= 0 || height <= 0) {
+                return;
+            }
+
+            width = height = Math.min(width, height);
+
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+            Canvas canvas = new Canvas();
+            canvas.setBitmap(bitmap);
+
+            RectF rect = new RectF(0, 0, width, height);
+
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(getResources().getColor(R.color.play_button_backing_color));
+
+            canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
+
+            mPlayButtonBacking.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
         }
     }
 
@@ -275,6 +314,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     private TextView mTitleView;
     private TextView mDescriptionView;
     private ImageView mPlayButton;
+    private View mPlayButtonBacking;
     private TextView mPlayProgress;
     private TextView mPlayDuration;
     private ListView mAudioList;
@@ -320,6 +360,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         mDescriptionView.setOnClickListener(this);
         mPlayButton = (ImageView) findViewById(R.id.iv_play_button);
         mPlayButton.setOnClickListener(this);
+        mPlayButtonBacking = findViewById(R.id.iv_play_button_backing);
 
         mPlayProgress = (TextView) findViewById(R.id.tv_play_progress);
         mPlayDuration = (TextView) findViewById(R.id.tv_play_duration);
