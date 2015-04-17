@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/iv_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/ic_play_small" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="7dp"
+        android:layout_toRightOf="@id/iv_play"
+        android:ellipsize="none"
+        android:maxLines="1"
+        android:text="测试title"
+        android:textColor="@color/title_color"
+        android:textSize="@dimen/title_size" />
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="275dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title"
+        android:layout_marginBottom="13dp"
+        android:layout_toRightOf="@id/iv_play"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="测试description测试description测试description测试description"
+        android:textColor="@color/description_color"
+        android:textSize="@dimen/description_size" />
+
+    <View
+        android:layout_width="301dp"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/tv_description"
+        android:background="#cecfd2" />
+
+</RelativeLayout>

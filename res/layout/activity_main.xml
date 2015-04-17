@@ -2,35 +2,115 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sina.alarm.ui.MainActivity"
     android:background="#ffffff"
-     >
-     
-    <include 
+    tools:context="com.sina.alarm.ui.MainActivity" >
+
+    <include
         android:id="@+id/action_bar"
-        layout="@layout/action_bar_layout"
-        />
-    
-    <RelativeLayout 
+        layout="@layout/action_bar_layout" />
+
+    <RelativeLayout
         android:id="@+id/rl_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/action_bar"
-        >
+        android:layout_below="@id/action_bar" >
 
-        <Button
-            android:id="@+id/btn_add_alarm"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/rl_play_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_alarm" />
+            android:layout_marginBottom="56dp"
+            android:layout_marginTop="20dp" >
 
-        <Button
-            android:id="@+id/btn_alarm_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/btn_add_alarm"
-            android:text="@string/alarm_list" />
-        
+            <TextView
+                android:id="@+id/tv_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="15dp"
+                android:maxLines="1"
+                android:text="测试用title"
+                android:textColor="@color/title_color"
+                android:textSize="@dimen/title_size" />
+
+            <TextView
+                android:id="@+id/tv_item_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_item_title"
+                android:layout_below="@id/tv_item_title"
+                android:lineSpacingExtra="10dp"
+                android:lines="2"
+                android:text="测试用description测试用description测试用description测试用description..."
+                android:textColor="@color/description_color"
+                android:textSize="@dimen/description_size" />
+
+            <RelativeLayout
+                android:id="@+id/rl_play_area"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_below="@id/tv_item_description"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="30dp" >
+
+                <ImageView
+                    android:id="@+id/iv_wave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_wave" />
+
+                <ImageView
+                    android:id="@+id/iv_play_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_play_big" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_play_progress_area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl_play_area"
+                android:layout_centerHorizontal="true" >
+
+                <TextView
+                    android:id="@+id/tv_slash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="/"
+                    android:textColor="@color/play_duration_color"
+                    android:textSize="@dimen/play_progress_size" />
+
+                <TextView
+                    android:id="@+id/tv_play_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/tv_slash"
+                    android:text="00:00:00"
+                    android:textColor="@color/play_progress_color"
+                    android:textSize="@dimen/play_progress_size" />
+
+                <TextView
+                    android:id="@+id/tv_play_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/tv_slash"
+                    android:text="00:00:00"
+                    android:textColor="@color/play_duration_color"
+                    android:textSize="@dimen/play_progress_size" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/lv_play_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/rl_play_content"
+            android:layout_marginBottom="41dp"
+            android:divider="#0000" />
     </RelativeLayout>
 
 </RelativeLayout>
