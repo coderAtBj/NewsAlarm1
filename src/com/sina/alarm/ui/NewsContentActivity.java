@@ -31,6 +31,7 @@ public class NewsContentActivity extends Activity implements OnClickListener, On
 	private TextView mNewsContentView;
 	private TextView mPlayProgress;
 	private TextView mPlayDuration;
+	private ImageView mPlayBtn;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,8 @@ public class NewsContentActivity extends Activity implements OnClickListener, On
 		mNewsContentView = (TextView)this.findViewById(R.id.tv_news_content);
 		mPlayProgress = (TextView)this.findViewById(R.id.tv_played_time);
 		mPlayDuration = (TextView)this.findViewById(R.id.tv_total_time);
+		mPlayBtn = (ImageView)this.findViewById(R.id.imv_play);
+		mPlayBtn.setOnClickListener(this);
 	}
 	
 	private void setupActionBar() {
@@ -81,6 +84,11 @@ public class NewsContentActivity extends Activity implements OnClickListener, On
 		
 		mNewsTitleView.setText(mNewsItem.getTitle());
 		mNewsContentView.setText(mNewsItem.getContent());
+		if (MediaManager.getInstance().isPlaying()) {
+			mPlayBtn.setImageResource(R.drawable.ic_pause_small);
+		} else {
+			mPlayBtn.setImageResource(R.drawable.ic_play_small);
+		}
 	}
 
 	@Override
@@ -93,6 +101,15 @@ public class NewsContentActivity extends Activity implements OnClickListener, On
 			SettingsActivity.startActivity(this);
 			break;
 		case R.id.imv_share:
+			break;
+		case R.id.imv_play:
+			if (MediaManager.getInstance().isPlaying()) {
+				MediaManager.getInstance().pause();
+				mPlayBtn.setImageResource(R.drawable.ic_play_small);
+			} else {
+				MediaManager.getInstance().start();
+				mPlayBtn.setImageResource(R.drawable.ic_pause_small);
+			}
 			break;
 
 		default:
