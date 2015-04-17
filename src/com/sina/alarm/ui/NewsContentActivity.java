@@ -1,9 +1,9 @@
 package com.sina.alarm.ui;
 
 import com.sina.alarm.R;
+import com.sina.alarm.app.AppLauncher;
 import com.sina.alarm.app.Constants;
-import com.sina.alarm.db.AlarmDBHelper;
-import com.sina.alarm.model.NewsModel;
+import com.sina.alarm.bean.AudioNewsItem;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,9 +21,8 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 		ctx.startActivity(intent);
 	}
 	
-	private long mNewsId;
-	private NewsModel mNewsModel;
-	private AlarmDBHelper mDbHelper;
+	private int mNewsId;
+	private AudioNewsItem mNewsItem;
 	
 	private TextView mNewsContentView;
 	
@@ -60,20 +59,16 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 	
 	private void parseData() {
 		Intent intent = getIntent();
-		mNewsId = intent.getLongExtra(Constants.sNewsIdKey, 1);
-		
-		if (mDbHelper == null) {
-			mDbHelper = new AlarmDBHelper(this.getApplicationContext());
-		}
-		mNewsModel = mDbHelper.getNews(mNewsId);
+		mNewsId = intent.getIntExtra(Constants.sNewsIdKey, 1);
+		mNewsItem = AppLauncher.getNewsItem(mNewsId);
 	}
 	
 	private void updateView() {
-		if (mNewsModel == null) {
+		if (mNewsItem == null) {
 			return;
 		}
 		
-		mNewsContentView.setText(mNewsModel.getTitle() + "\n\n" + mNewsModel.getContent());
+		mNewsContentView.setText(mNewsItem.getTitle() + "\n\n" + mNewsItem.getContent());
 	}
 
 	@Override
@@ -83,7 +78,7 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 			this.finish();
 			break;
 		case R.id.imv_settings:
-			//TODO:
+			SettingsActivity.startActivity(this);
 			break;
 		case R.id.imv_share:
 			break;
