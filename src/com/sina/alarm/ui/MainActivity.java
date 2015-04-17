@@ -398,6 +398,15 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
                 mState.nextState(PausingState.class);
             }
         }
+
+        int newsId = (int) getIntent().getLongExtra(Constants.sNewsIdKey, -1);
+        if (newsId > -1) {
+            for (AudioNewsItem item : mItems) {
+                if (item.getId() == newsId) {
+                    mState.onSelectItem(item);
+                }
+            }
+        }
     }
 
     @Override
