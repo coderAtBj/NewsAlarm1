@@ -1,11 +1,10 @@
 package com.sina.alarm.bean;
 
-import android.net.Uri;
 
 public class AudioNewsItem {
     final private int id;
 
-    private Uri audioUri;
+    private int audioResource;
     private String title;
     private String description;
     private String content;
@@ -14,9 +13,9 @@ public class AudioNewsItem {
         this.id = id;
     }
 
-    public AudioNewsItem(int id, Uri audioUri, String title, String description, String content) {
+    public AudioNewsItem(int id, int audioResId, String title, String description, String content) {
         this(id);
-        this.audioUri = audioUri;
+        this.audioResource = audioResId;
         this.title = title;
         this.description = description;
         this.content = content;
@@ -26,12 +25,12 @@ public class AudioNewsItem {
         return id;
     }
 
-    public Uri getAudioUri() {
-        return audioUri;
+    public int getAudioResource() {
+        return audioResource;
     }
 
-    public void setAudioUri(Uri audioUri) {
-        this.audioUri = audioUri;
+    public void setAudioResource(int audioUri) {
+        this.audioResource = audioUri;
     }
 
     public String getTitle() {

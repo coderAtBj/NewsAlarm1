@@ -1,18 +1,16 @@
 package com.sina.alarm.ui;
 
-import java.text.SimpleDateFormat;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
-import com.sina.alarm.R;
-import com.sina.alarm.app.Constants;
+import java.util.Map;
+
 import android.app.Activity;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.net.Uri;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableStringBuilder;
@@ -25,20 +23,185 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.sina.alarm.R;
+import com.sina.alarm.app.Constants;
 import com.sina.alarm.bean.AudioNewsItem;
+import com.sina.alarm.model.MediaManager;
+import com.sina.alarm.model.MediaManager.OnProgressChangeListener;
 import com.sina.alarm.ui.adapter.AudioListAdapter;
+import com.sina.alarm.util.Util;
 
 public class MainActivity extends Activity implements OnClickListener, OnItemClickListener,
-        OnCompletionListener {
+        OnCompletionListener, OnProgressChangeListener {
 
-    public final static SimpleDateFormat PLAY_TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
-    {
-        PLAY_TIME_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+    private Map<Class<?>, State> mStatePool = new HashMap<Class<?>, State>();
+
+    abstract public class State {
+
+        /**
+         * 每次进入该状态时调用
+         */
+        public void onActivate() {
+        }
+
+        /**
+         * 播放按钮被点击事件
+         */
+        public void onClickPlayButton() {
+            Util.logd(this.getClass().getSimpleName() + "." + "onClickPlayButton");
+        }
+
+        /**
+         * 播放进度变化事件
+         */
+        public void onProgressChange() {
+            // Util.logd(this.getClass().getSimpleName() + "." + "onProgressChange");
+        }
+
+        /**
+         * 播放列表中选择点击事件
+         * 
+         * @param item
+         */
+        public void onSelectItem(AudioNewsItem item) {
+            Util.logd(this.getClass().getSimpleName() + "." + "onSelectItem");
+
+            mCurrentItem = item;
+            mTitleView.setText(item.getTitle());
+
+            final CharSequence orginalText = item.getDescription();
+            final CharSequence moreText = "More";
+
+            SpannableStringBuilder spannable = new SpannableStringBuilder();
+            spannable.append(orginalText);
+            spannable.append(moreText);
+            spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.link_color)),
+                    orginalText.length(), orginalText.length() + moreText.length(),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+            mDescriptionView.setText(spannable);
+        }
+
+        /**
+         * Activity销毁事件
+         */
+        public void onActivityDestroy() {
+            Util.logd(this.getClass().getSimpleName() + "." + "onActivityDestroy");
+
+            mPlayer.stop();
+            mPlayer.release();
+        }
+
+        /**
+         * 切换状态
+         * 
+         * @param stateClass
+         */
+        final protected void nextState(Class<? extends State> stateClass) {
+            if (mStatePool.containsKey(stateClass)) {
+                mState = mStatePool.get(stateClass);
+            } else {
+
+                try {
+                    Constructor<? extends State> constructor = stateClass
+                            .getConstructor(MainActivity.class);
+                    mState = constructor.newInstance(MainActivity.this);
+                    mStatePool.put(stateClass, mState);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            mState.onActivate();
+        }
+
+        /**
+         * 更新播放进度显示
+         */
+        protected void updateProgress() {
+            mPlayProgress.setText(mPlayer.getProgressString());
+            mPlayDuration.setText(mPlayer.getDurationString());
+        }
     }
 
+    public class PlayingState extends State {
+        public void onActivate() {
+            mPlayButton.setImageResource(R.drawable.ic_pause_big);
+        }
+
+        @Override
+        public void onClickPlayButton() {
+            super.onClickPlayButton();
+
+            mPlayer.pause();
+            nextState(PausingState.class);
+        }
+
+        @Override
+        public void onProgressChange() {
+            super.onProgressChange();
+            updateProgress();
+        }
+
+        @Override
+        public void onSelectItem(AudioNewsItem item) {
+            if (item == mCurrentItem) {
+                mPlayer.pause();
+                nextState(PausingState.class);
+            } else {
+                super.onSelectItem(item);
+                mPlayer.setDataSource(MainActivity.this, item.getAudioResource());
+                mPlayer.start();
+            }
+        }
+
+    }
+
+    public class PausingState extends State {
+        public void onActivate() {
+            mPlayButton.setImageResource(R.drawable.ic_play_big);
+        }
+
+        @Override
+        public void onClickPlayButton() {
+            super.onClickPlayButton();
+
+            mPlayer.start();
+            nextState(PlayingState.class);
+        }
+
+        @Override
+        public void onSelectItem(AudioNewsItem item) {
+            if (item != mCurrentItem) {
+                // 只有不一样时才需要重新加载文件
+                mPlayer.setDataSource(MainActivity.this, item.getAudioResource());
+            }
+
+            super.onSelectItem(item);
+            mPlayer.start();
+            nextState(PlayingState.class);
+        }
+    }
+
+    public class ReadyState extends State {
+        public ReadyState() {
+            mPlayButton.setImageResource(R.drawable.ic_play_big);
+        }
+
+        @Override
+        public void onSelectItem(AudioNewsItem item) {
+            super.onSelectItem(item);
+            mPlayer.setDataSource(MainActivity.this, item.getAudioResource());
+            updateProgress();
+            nextState(PausingState.class);
+        }
+    }
+
+    private State mState;
     private List<AudioNewsItem> mItems;
-    private MediaPlayer mPlayer;
-    private boolean mIsPlayerPausedByActivity = false;
+    private AudioNewsItem mCurrentItem;
+    private MediaManager mPlayer;
 
     private TextView mTitleView;
     private TextView mDescriptionView;
@@ -49,7 +212,6 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     private AudioListAdapter mAudioListAdapter;
 
     private Handler mHandler;
-    private Runnable mPlayRuntime;
 
     public static void startActivity(Context ctx, long newsId) {
         Intent intent = new Intent();
@@ -69,6 +231,11 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         initData();
         setupActionBar();
         initView();
+
+        mState = new ReadyState();
+        if (mItems.size() > 0) {
+            mState.onSelectItem(mItems.get(0));
+        }
     }
 
     private void setupActionBar() {
@@ -96,145 +263,43 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         mAudioListAdapter = new AudioListAdapter();
         mAudioList.setAdapter(mAudioListAdapter);
         mAudioListAdapter.setData(mItems);
-
-        if (mItems.size() > 0) {
-            selectItem(mItems.get(0));
-        }
-
     }
 
     private void initData() {
-        mPlayer = new MediaPlayer();
+        mPlayer = MediaManager.getInstance();
         mPlayer.setOnCompletionListener(this);
+        mPlayer.setOnProgressChangeListener(this);
 
         mHandler = new Handler();
-        mPlayRuntime = new Runnable() {
-            @Override
-            public void run() {
-                updatePlayProgress();
-                mHandler.postDelayed(this, 1000);
-            }
-        };
-
-        mHandler.post(mPlayRuntime);
 
         mItems = new ArrayList<AudioNewsItem>();
 
-        mItems.add(new AudioNewsItem(1, getUri(R.raw.audio_1), "李嘉诚15亿捐建寺庙曝光 每天公供400人参观",
+        mItems.add(new AudioNewsItem(1, R.raw.audio_1, "李嘉诚15亿捐建寺庙曝光 每天公供400人参观",
                 "李嘉诚15亿捐建寺庙曝光，每天公供400人参观...", ""));
-        mItems.add(new AudioNewsItem(2, getUri(R.raw.audio_2), "中日韩将提出共同观测PM2.5",
-                "中日韩将提出共同观测PM2.5...", ""));
-        mItems.add(new AudioNewsItem(3, getUri(R.raw.audio_3), "浙江省温州市副市长孔海龙接受组织调查",
+        mItems.add(new AudioNewsItem(2, R.raw.audio_2, "中日韩将提出共同观测PM2.5", "中日韩将提出共同观测PM2.5...", ""));
+        mItems.add(new AudioNewsItem(3, R.raw.audio_3, "浙江省温州市副市长孔海龙接受组织调查",
                 "浙江省温州市副市长孔海龙接受组织调查...", ""));
-        mItems.add(new AudioNewsItem(4, getUri(R.raw.audio_4), "菲总统称中国对南海主权声索引发恐惧 中方回应",
+        mItems.add(new AudioNewsItem(4, R.raw.audio_4, "菲总统称中国对南海主权声索引发恐惧 中方回应",
                 "菲总统称中国对南海主权声索引发恐惧，中方回应...", ""));
-    }
-
-    private void updatePlayProgress() {
-        int time = 0;
-        int duration = 0;
-
-        try {
-            duration = mPlayer.getDuration();
-            time = mPlayer.getCurrentPosition();
-        } catch (Exception e) {
-            time = 0;
-            duration = 0;
-        }
-
-        mPlayProgress.setText(formatPlayTime(time));
-        mPlayDuration.setText(formatPlayTime(duration));
-    }
-
-    public Uri getUri(int resId) {
-        Uri.Builder builder = new Uri.Builder();
-
-        builder.scheme("android.resource");
-        builder.authority(getPackageName());
-        builder.appendPath(Integer.toString(resId));
-
-        return builder.build();
-    }
-
-    public void selectItem(AudioNewsItem item) {
-        boolean isPlaying = mPlayer.isPlaying();
-        mPlayer.stop();
-        mPlayer.reset();
-
-        mTitleView.setText(item.getTitle());
-
-        final CharSequence orginalText = item.getDescription();
-        final CharSequence moreText = "More";
-
-        SpannableStringBuilder spannable = new SpannableStringBuilder();
-        spannable.append(orginalText);
-        spannable.append(moreText);
-        spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.link_color)),
-                orginalText.length(), orginalText.length() + moreText.length(),
-                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-
-        mDescriptionView.setText(spannable);
-
-        try {
-            mPlayer.setDataSource(this, item.getAudioUri());
-            mPlayer.prepare();
-            if (isPlaying) {
-                mPlayer.start();
-                updatePlayProgress();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        int pos = mAudioList.getSelectedItemPosition();
-        int next = (pos + 1) % mAudioList.getCount();
-
-        mAudioList.setSelection(next);
-        selectItem((AudioNewsItem) mAudioList.getSelectedItem());
+        int nextIndex = mItems.indexOf(mCurrentItem) + 1;
+        if (nextIndex < mItems.size()) {
+            mState.onSelectItem(mItems.get(nextIndex));
+        }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mAudioList.setSelection(position);
-        selectItem((AudioNewsItem) view.getTag());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mIsPlayerPausedByActivity && !mPlayer.isPlaying()) {
-            mPlayer.start();
-            updatePlayProgress();
-            mIsPlayerPausedByActivity = false;
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mPlayer.isPlaying()) {
-            mPlayer.pause();
-            mIsPlayerPausedByActivity = true;
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
+        mState.onSelectItem((AudioNewsItem) view.getTag());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPlayer.stop();
-        mPlayer.release();
-    }
-
-    public static String formatPlayTime(int time) {
-        return PLAY_TIME_FORMAT.format(new Date(time));
+        mState.onActivityDestroy();
     }
 
     @Override
@@ -252,13 +317,17 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         }
 
         if (view == mPlayButton) {
-            if (mPlayer.isPlaying()) {
-                mPlayer.pause();
-            } else {
-                mPlayer.start();
-            }
-
-            updatePlayProgress();
+            mState.onClickPlayButton();
         }
+    }
+
+    @Override
+    public void onProgressChange(int currentPosition, int duration) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mState.onProgressChange();
+            }
+        });
     }
 }
