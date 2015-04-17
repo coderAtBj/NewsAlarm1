@@ -1,4 +1,4 @@
-package com.sina.alarm.db;
+package com.sina.alarm.model;
 
 import android.net.Uri;
 

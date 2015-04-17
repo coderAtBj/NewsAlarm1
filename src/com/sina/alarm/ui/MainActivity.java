@@ -1,6 +1,7 @@
 package com.sina.alarm.ui;
 
 import com.sina.alarm.R;
+import com.sina.alarm.app.Constants;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,9 +12,10 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity implements OnClickListener {
-	public static void startActivity(Context ctx) {
+	public static void startActivity(Context ctx, long newsId) {
 		Intent intent = new Intent();
 		intent.setClass(ctx, MainActivity.class);
+		intent.putExtra(Constants.sNewsIdKey, newsId);
 		if (!(ctx instanceof Activity)) {
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		}
@@ -51,7 +53,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.imv_settings:
 			//TODO: tempory here.
-			NewsContentActivity.startActivity(this);
+			NewsContentActivity.startActivity(this, 1);
 			break;
 		default:
 			break;

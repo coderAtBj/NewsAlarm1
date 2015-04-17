@@ -3,20 +3,20 @@ package com.sina.alarm.db;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sina.alarm.db.AlarmContract;
 import com.sina.alarm.db.AlarmContract.Alarm;
+import com.sina.alarm.db.AlarmContract.News;
+import com.sina.alarm.model.AlarmModel;
+import com.sina.alarm.model.NewsModel;
 
-import android.R.string;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
 public class AlarmDBHelper extends SQLiteOpenHelper {
-	public static final int DATABASE_VERSION = 1;
+	public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "alarmclock.db";
  
     private static final String SQL_CREATE_ALARM = "CREATE TABLE " + Alarm.TABLE_NAME + " (" +
@@ -29,8 +29,18 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
             Alarm.COLUMN_NAME_ALARM_TONE + " TEXT," +
             Alarm.COLUMN_NAME_ALARM_ENABLED + " BOOLEAN" + " )";
     
+    private static final String SQL_CREATE_NEWS = "CREATE TABLE " + News.TABLE_NAME + " (" +
+    		News._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+    		News.COLUMN_NAME_NEWS_ID + " INTEGER," +
+    		News.COLUMN_NAME_NEWS_TITLE + " TEXT," +
+            News.COLUMN_NAME_NEWS_CONTENT + " TEXT," +
+            News.COLUMN_NAME_NEWS_READ + " BOOLEAN" + " )";
+    
     private static final String SQL_DELETE_ALARM =
             "DROP TABLE IF EXISTS " + Alarm.TABLE_NAME;
+    
+    private static final String SQL_DELETE_NEWS =
+            "DROP TABLE IF EXISTS " + News.TABLE_NAME;
 
 	public AlarmDBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -41,12 +51,14 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
 		db.execSQL(SQL_CREATE_ALARM);
+		db.execSQL(SQL_CREATE_NEWS);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
 		db.execSQL(SQL_DELETE_ALARM);
+		db.execSQL(SQL_DELETE_NEWS);
 		onCreate(db);
 	}
 	
@@ -96,8 +108,7 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
 		
 		String select = "SELECT * FROM " + Alarm.TABLE_NAME + " WHERE " + Alarm._ID + " = " + id;
 		
-		Cursor c = db.rawQuery(select, null)
-;
+		Cursor c = db.rawQuery(select, null);
 		if (c.moveToNext()) {
 			return populateModel(c);
 		}
@@ -129,6 +140,46 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
 		
 		if (!alarmList.isEmpty()) {
 			return alarmList;
+		}
+		
+		return null;
+	}
+	
+	public long insertNews(NewsModel model) {
+		return getWritableDatabase().insert(News.TABLE_NAME, null, model.toContentValues());
+	}
+	
+	public long updateNews(NewsModel model) {
+		return getWritableDatabase().update(News.TABLE_NAME, model.toContentValues(), 
+				News.COLUMN_NAME_NEWS_ID + " = ?", new String[] {String.valueOf(model.getNews_id())});
+	}
+	
+	public NewsModel getNews(long newsId) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		String select = "SELECT * FROM " + News.TABLE_NAME + " WHERE " + News.COLUMN_NAME_NEWS_ID + " = " + newsId;
+		
+		Cursor c = db.rawQuery(select, null);
+		if (c.moveToNext()) {
+			return new NewsModel(c);
+		}
+		return null;
+	}
+	
+	public List<NewsModel> getNews() {
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		String select = "SELECT * FROM " + News.TABLE_NAME;
+		Cursor c = db.rawQuery(select, null);
+		if (c == null) return null;
+		
+		List<NewsModel> newsList = new ArrayList<NewsModel>();
+		while (c.moveToNext()) {
+			newsList.add(new NewsModel(c));
+		}
+		c.close();
+		
+		if (!newsList.isEmpty()) {
+			return newsList;
 		}
 		
 		return null;

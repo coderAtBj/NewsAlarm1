@@ -2,7 +2,7 @@ package com.sina.alarm.ui;
 
 import com.sina.alarm.R;
 import com.sina.alarm.db.AlarmDBHelper;
-import com.sina.alarm.db.AlarmModel;
+import com.sina.alarm.model.AlarmModel;
 import com.sina.alarm.service.AlarmManagerHelper;
 
 import android.app.AlertDialog;
