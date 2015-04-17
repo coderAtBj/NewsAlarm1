@@ -17,7 +17,11 @@ public class AlarmService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		MainActivity.startActivity(getApplicationContext(), 1);
+		String toneUriStr = null;
+		if (intent != null) {
+			toneUriStr = intent.getStringExtra(AlarmManagerHelper.TONE);	
+		}
+		MainActivity.startActivity(getApplicationContext(), 1, toneUriStr);
 		AlarmManagerHelper.setAlarms(this);
 		
 		return super.onStartCommand(intent, flags, startId);
