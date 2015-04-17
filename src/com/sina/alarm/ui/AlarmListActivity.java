@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -39,12 +38,13 @@ public class AlarmListActivity extends ListActivity implements OnClickListener {
 	
 	public void deleteAlarm(long id) {
     	final long alarmId = id;
-    	Log.i(null, "1234567");
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    	builder.setMessage("Do you want delete?").setTitle("Truely set?").setCancelable(true)
-    	.setNegativeButton("Cancel", null)
-    	.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			
+    	builder.setMessage(getString(R.string.remove_confirm))
+    		.setTitle(getString(R.string.remove))
+    		.setCancelable(true)
+    		.setNegativeButton(getString(R.string.cancel), null)
+    		.setPositiveButton(getString(R.string.ok),
+    				new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dbHelper.deleteAlarm(alarmId);

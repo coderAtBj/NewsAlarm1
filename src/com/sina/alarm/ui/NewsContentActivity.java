@@ -1,9 +1,9 @@
 package com.sina.alarm.ui;
 
 import com.sina.alarm.R;
+import com.sina.alarm.app.AppLauncher;
 import com.sina.alarm.app.Constants;
-import com.sina.alarm.db.AlarmDBHelper;
-import com.sina.alarm.model.NewsModel;
+import com.sina.alarm.bean.AudioNewsItem;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,9 +21,8 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 		ctx.startActivity(intent);
 	}
 	
-	private long mNewsId;
-	private NewsModel mNewsModel;
-	private AlarmDBHelper mDbHelper;
+	private int mNewsId;
+	private AudioNewsItem mNewsItem;
 	
 	private TextView mNewsContentView;
 	
@@ -45,7 +43,8 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 	
 	private void setupActionBar() {
     	ImageView imv = (ImageView)this.findViewById(R.id.imv_back);
-    	imv.setVisibility(View.GONE);
+    	imv.setVisibility(View.VISIBLE);
+    	imv.setOnClickListener(this);
     	
     	imv = (ImageView)this.findViewById(R.id.imv_alarm);
     	imv.setVisibility(View.GONE);
@@ -60,27 +59,26 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 	
 	private void parseData() {
 		Intent intent = getIntent();
-		mNewsId = intent.getLongExtra(Constants.sNewsIdKey, 1);
-		
-		if (mDbHelper == null) {
-			mDbHelper = new AlarmDBHelper(this.getApplicationContext());
-		}
-		mNewsModel = mDbHelper.getNews(mNewsId);
+		mNewsId = intent.getIntExtra(Constants.sNewsIdKey, 1);
+		mNewsItem = AppLauncher.getNewsItem(mNewsId);
 	}
 	
 	private void updateView() {
-		if (mNewsModel == null) {
+		if (mNewsItem == null) {
 			return;
 		}
 		
-		mNewsContentView.setText(mNewsModel.getTitle() + "\n\n" + mNewsModel.getContent());
+		mNewsContentView.setText(mNewsItem.getTitle() + "\n\n" + mNewsItem.getContent());
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
+		case R.id.imv_back:
+			this.finish();
+			break;
 		case R.id.imv_settings:
-			//TODO:
+			SettingsActivity.startActivity(this);
 			break;
 		case R.id.imv_share:
 			break;

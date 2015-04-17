@@ -16,9 +16,22 @@
     
     <string name="add_alarm">新建</string>
     <string name="alarm_list">闹钟管理</string>
-    <string name="save_alarm">保存</string>
     <string name="default_played_time">00:00:00</string>
     <string name="time_divider">/</string>
+    <string name="settings">设置</string>
+    <string name="remove">删除</string>
+    <string name="remove_confirm">确认要删除吗？</string>
+    <string name="ok">确认</string>
+    <string name="cancel">取消</string>
+    
+    <string-array name="channels">
+        <item>互联网</item>
+        <item>科技</item>
+        <item>美食</item>
+        <item>艺术</item>
+        <item>财经</item>
+		<item>健康</item>        
+    </string-array>
     
     <string name="default_desc">place hoder</string>
     

@@ -43,6 +43,11 @@
             android:screenOrientation="portrait"
             />
         
+        <activity 
+            android:name="com.sina.alarm.ui.SettingsActivity"
+            android:screenOrientation="portrait"
+            />
+        
         <service android:name="com.sina.alarm.service.AlarmService"
             android:enabled="true" />
         

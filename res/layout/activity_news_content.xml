@@ -18,6 +18,7 @@
         android:textSize="14sp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
+        android:paddingTop="20dp"
          />
     
     <ImageView 
@@ -42,7 +43,7 @@
             android:id="@+id/imv_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_play"
+            android:src="@drawable/ic_play_small"
             android:contentDescription="@string/default_desc"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"

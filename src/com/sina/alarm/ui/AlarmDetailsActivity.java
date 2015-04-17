@@ -48,9 +48,9 @@ public class AlarmDetailsActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_details);
+		setupActionBar();
 		initViews();
 		initData();
-		setupActionBar();
 	}
 	
 	private void setupActionBar() {
@@ -62,6 +62,10 @@ public class AlarmDetailsActivity extends Activity implements OnClickListener {
     	
     	imv = (ImageView)this.findViewById(R.id.imv_settings);
     	imv.setVisibility(View.GONE);
+    	
+    	imv = (ImageView)this.findViewById(R.id.imv_save_alarm);
+    	imv.setVisibility(View.VISIBLE);
+    	imv.setOnClickListener(this);
     	
     	TextView tv = (TextView)this.findViewById(R.id.tv_actionbar_title);
     	tv.setText(R.string.add_alarm);
@@ -81,9 +85,6 @@ public class AlarmDetailsActivity extends Activity implements OnClickListener {
 		txtToneSelection = (TextView)findViewById(R.id.alarm_label_tone_selection);
 		LinearLayout ringToneContainer = (LinearLayout) findViewById(R.id.alarm_ringtone_container);
 		ringToneContainer.setOnClickListener(this);
-		
-		Button btn = (Button)this.findViewById(R.id.btn_save_alarm);
-		btn.setOnClickListener(this);
 	}
 	
 	private void initData() {
@@ -133,7 +134,7 @@ public class AlarmDetailsActivity extends Activity implements OnClickListener {
 		case R.id.imv_back:
 			this.finish();
 			break;
-		case R.id.btn_save_alarm:
+		case R.id.imv_save_alarm:
 			saveAlarm();
 			break;
 		case R.id.alarm_ringtone_container:
