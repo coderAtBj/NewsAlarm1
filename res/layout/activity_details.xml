@@ -42,16 +42,6 @@
                 android:ems="10"
                 android:hint="@string/details_alarm_name" />
 
-            <Button
-                android:id="@+id/btn_save_alarm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/alarm_details_name"
-                android:layout_below="@id/alarm_details_time_picker"
-                android:layout_marginLeft="10dp"
-                android:layout_toRightOf="@id/alarm_details_name"
-                android:text="@string/save_alarm" />
-
             <View
                 android:id="@+id/divider2"
                 style="@style/Divider"
