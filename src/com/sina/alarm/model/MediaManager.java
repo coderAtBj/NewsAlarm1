@@ -121,7 +121,15 @@ public class MediaManager {
         return isPrepared;
     }
 
+    public void setPrepared(boolean prepared) {
+        this.isPrepared = prepared;
+    }
+
     public boolean isPlaying() {
+        if (!isPrepared()) {
+            return false;
+        }
+
         return player.isPlaying();
     }
 
@@ -148,22 +156,42 @@ public class MediaManager {
     }
 
     public MediaManager stop() {
-        player.stop();
+        if (isPrepared()) {
+            player.stop();
+        }
+
+        stopTimer();
+
         return this;
     }
 
     public MediaManager reset() {
-        player.reset();
+        if (isPrepared()) {
+            player.reset();
+            setPrepared(false);
+        }
+
+        stopTimer();
+
         return this;
     }
 
     public MediaManager release() {
         reset();
-        player.release();
+
+        if (isPrepared()) {
+            player.release();
+            setPrepared(false);
+        }
+
         return this;
     }
 
     public int getProgress() {
+        if (!isPrepared()) {
+            return 0;
+        }
+
         return player.getCurrentPosition();
     }
 
@@ -172,6 +200,10 @@ public class MediaManager {
     }
 
     public int getDuration() {
+        if (!isPrepared()) {
+            return 0;
+        }
+
         return player.getDuration();
     }
 

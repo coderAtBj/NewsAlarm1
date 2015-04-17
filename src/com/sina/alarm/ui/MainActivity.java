@@ -69,6 +69,10 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             // Util.logd(this.getClass().getSimpleName() + "." + "onProgressChange");
         }
 
+        public void onCompletion() {
+            playNext(false);
+        }
+
         /**
          * 播放列表中选择点击事件
          * 
@@ -103,6 +107,9 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 
         @Override
         public void onFaceDown() {
+        }
+
+        public void onActivityPause() {
         }
 
         /**
@@ -151,11 +158,11 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         @Override
         public void onActivate() {
             mPlayButton.setImageResource(R.drawable.ic_play_big);
-//            if (mToneUri != null) {
-//            	mPlayer.setDataSource(MainActivity.this.getApplicationContext(), mToneUri);
-//            	mPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-//            	mPlayer.start();
-//			}
+            // if (mToneUri != null) {
+            // mPlayer.setDataSource(MainActivity.this.getApplicationContext(), mToneUri);
+            // mPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+            // mPlayer.start();
+            // }
         }
 
         @Override
@@ -210,6 +217,12 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             mPlayer.pause();
             nextState(FaceDownPausingState.class);
         }
+
+        @Override
+        public void onActivityPause() {
+            super.onActivityPause();
+            nextState(BlurredPlayingState.class);
+        }
     }
 
     public class PausingState extends State {
@@ -243,6 +256,12 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             super.onFaceUp();
             mPlayer.start();
             nextState(PlayingState.class);
+        }
+    }
+
+    public class BlurredPlayingState extends PlayingState {
+        @Override
+        public void onCompletion() {
         }
     }
 
@@ -313,6 +332,8 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     }
 
     private void initData() {
+        mState = null;
+
         mHandler = new Handler();
 
         mShakeListener = new ShakeListener(this);
@@ -323,8 +344,8 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         mItems = new ArrayList<AudioNewsItem>(AppLauncher.getNewsItems());
         String toneStr = getIntent().getStringExtra(AlarmManagerHelper.TONE);
         if (!TextUtils.isEmpty(toneStr)) {
-        	mToneUri =  Uri.parse(toneStr);
-		}
+            mToneUri = Uri.parse(toneStr);
+        }
     }
 
     public void playNext() {
@@ -349,7 +370,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        playNext(false);
+        mState.onCompletion();
     }
 
     @Override
@@ -383,6 +404,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     protected void onPause() {
         super.onPause();
         mShakeListener.pause();
+        mState.onActivityPause();
     }
 
     @Override
@@ -401,8 +423,8 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
                 SettingsActivity.startActivity(this);
                 break;
             case R.id.tv_item_description:
-            	NewsContentActivity.startActivity(this, mCurrentItem.getId());
-            	break;
+                NewsContentActivity.startActivity(this, mCurrentItem.getId());
+                break;
             default:
                 break;
         }
