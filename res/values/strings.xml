@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">NewsAlarm</string>
+    <string name="app_name">新闻闹钟</string>
     <string name="details_alarm_name">Alarm Name</string>
     <string name="details_repeat_weekly">Repeat Weekly</string>
     <string name="details_sunday">Sunday</string>
