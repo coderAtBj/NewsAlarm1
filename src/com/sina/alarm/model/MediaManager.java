@@ -95,10 +95,21 @@ public class MediaManager {
     public MediaManager setDataSource(Context context, Uri uri) {
         try {
             player.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
             player.reset();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
             player.setDataSource(context, uri);
             player.prepare();
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return this;

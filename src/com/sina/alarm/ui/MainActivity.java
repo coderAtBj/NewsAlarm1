@@ -40,7 +40,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 
     private Map<Class<?>, State> mStatePool = new HashMap<Class<?>, State>();
 
-    abstract public class State {
+    abstract public class State implements OnShakeListener {
 
         public State() {
             onActivate();
@@ -90,7 +90,16 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             mDescriptionView.setText(spannable);
         }
 
+        @Override
         public void onShake() {
+        }
+
+        @Override
+        public void onFaceUp() {
+        }
+
+        @Override
+        public void onFaceDown() {
         }
 
         /**
@@ -134,6 +143,23 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         }
     }
 
+    public class ReadyState extends State {
+
+        @Override
+        public void onActivate() {
+            mPlayButton.setImageResource(R.drawable.ic_play_big);
+            // TODO: play ring
+        }
+
+        @Override
+        public void onSelectItem(AudioNewsItem item) {
+            super.onSelectItem(item);
+            mPlayer.setDataSource(MainActivity.this, item.getAudioResource());
+            updateProgress();
+            nextState(PausingState.class);
+        }
+    }
+
     public class PlayingState extends State {
         public void onActivate() {
             mPlayButton.setImageResource(R.drawable.ic_pause_big);
@@ -171,6 +197,12 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             playNext();
         }
 
+        @Override
+        public void onFaceDown() {
+            super.onFaceDown();
+            mPlayer.pause();
+            nextState(FaceDownPausingState.class);
+        }
     }
 
     public class PausingState extends State {
@@ -181,7 +213,6 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         @Override
         public void onClickPlayButton() {
             super.onClickPlayButton();
-
             mPlayer.start();
             nextState(PlayingState.class);
         }
@@ -199,20 +230,12 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         }
     }
 
-    public class ReadyState extends State {
-
+    public class FaceDownPausingState extends PausingState {
         @Override
-        public void onActivate() {
-            mPlayButton.setImageResource(R.drawable.ic_play_big);
-            // TODO: play ring
-        }
-
-        @Override
-        public void onSelectItem(AudioNewsItem item) {
-            super.onSelectItem(item);
-            mPlayer.setDataSource(MainActivity.this, item.getAudioResource());
-            updateProgress();
-            nextState(PausingState.class);
+        public void onFaceUp() {
+            super.onFaceUp();
+            mPlayer.start();
+            nextState(PlayingState.class);
         }
     }
 
@@ -380,13 +403,11 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 
     @Override
     public void onFaceUp() {
-        // TODO Auto-generated method stub
-        
+        mState.onFaceUp();
     }
 
     @Override
     public void onFaceDown() {
-        // TODO Auto-generated method stub
-        
+        mState.onFaceDown();
     }
 }

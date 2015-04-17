@@ -1,5 +1,7 @@
 package com.sina.alarm.sensor;
 
+import com.sina.alarm.util.Util;
+
 import android.content.Context;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
@@ -12,6 +14,8 @@ public class ShakeListener implements SensorListener {
     private static final int SHAKE_DURATION = 1000;
     private static final int SHAKE_COUNT = 3;
 
+    private static final float GRAVITY_THRESHOLD = 9.5f;
+
     private SensorManager mSensorMgr;
     private float mLastX = -1.0f, mLastY = -1.0f, mLastZ = -1.0f;
     private long mLastTime;
@@ -20,6 +24,7 @@ public class ShakeListener implements SensorListener {
     private int mShakeCount = 0;
     private long mLastShake;
     private long mLastForce;
+    private long mLastTurn = -1;
 
     public interface OnShakeListener {
         public void onShake();
@@ -67,6 +72,22 @@ public class ShakeListener implements SensorListener {
         }
 
         long now = System.currentTimeMillis();
+
+        float gravity = values[SensorManager.DATA_Z];
+
+        if (gravity < GRAVITY_THRESHOLD && gravity > -GRAVITY_THRESHOLD) {
+            mLastTurn = now;
+        }
+
+        if (mLastTurn > 0 && now - mLastTurn > SHAKE_TIMEOUT) {
+            if (gravity >= GRAVITY_THRESHOLD) {
+                mShakeListener.onFaceDown();
+            } else if (gravity <= -GRAVITY_THRESHOLD) {
+                mShakeListener.onFaceUp();
+            }
+
+            mLastTurn = -1;
+        }
 
         if ((now - mLastForce) > SHAKE_TIMEOUT) {
             mShakeCount = 0;
