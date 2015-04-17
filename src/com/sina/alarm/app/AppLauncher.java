@@ -26,7 +26,13 @@ public class AppLauncher extends Application {
 		if (mItems == null) {
 			return null;
 		}
-		return mItems.get(id);
+		
+		for (AudioNewsItem item : mItems) {
+			if (item.getId() == id) {
+				return item;
+			}
+		}
+		return null;
 	}
 	
 	private void initAppData() {

@@ -4,6 +4,8 @@ import com.sina.alarm.R;
 import com.sina.alarm.app.AppLauncher;
 import com.sina.alarm.app.Constants;
 import com.sina.alarm.bean.AudioNewsItem;
+import com.sina.alarm.model.MediaManager;
+import com.sina.alarm.model.MediaManager.OnProgressChangeListener;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,10 +16,11 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class NewsContentActivity extends Activity implements OnClickListener {
-	public static void startActivity(Context ctx, long newsId) {
+public class NewsContentActivity extends Activity implements OnClickListener, OnProgressChangeListener{
+	public static void startActivity(Context ctx, int newsId) {
 		Intent intent = new Intent();
 		intent.setClass(ctx, NewsContentActivity.class);
+		intent.putExtra(Constants.sNewsIdKey, newsId);
 		ctx.startActivity(intent);
 	}
 	
@@ -25,6 +28,8 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 	private AudioNewsItem mNewsItem;
 	
 	private TextView mNewsContentView;
+	private TextView mPlayProgress;
+	private TextView mPlayDuration;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +40,13 @@ public class NewsContentActivity extends Activity implements OnClickListener {
         setupActionBar();
         parseData();
         updateView();
+        MediaManager.getInstance().setOnProgressChangeListener(this);
 	}
 	
 	private void initView() {
 		mNewsContentView = (TextView)this.findViewById(R.id.tv_news_content);
+		mPlayProgress = (TextView)this.findViewById(R.id.tv_played_time);
+		mPlayDuration = (TextView)this.findViewById(R.id.tv_total_time);
 	}
 	
 	private void setupActionBar() {
@@ -60,6 +68,7 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 	private void parseData() {
 		Intent intent = getIntent();
 		mNewsId = intent.getIntExtra(Constants.sNewsIdKey, 1);
+		
 		mNewsItem = AppLauncher.getNewsItem(mNewsId);
 	}
 	
@@ -87,5 +96,16 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 			break;
 		}
 		
+	}
+
+	@Override
+	public void onProgressChange(int currentPosition, int duration) {
+		NewsContentActivity.this.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				mPlayProgress.setText(MediaManager.getInstance().getProgressString());
+		        mPlayDuration.setText(MediaManager.getInstance().getDurationString());
+			}
+		});
 	}
 }

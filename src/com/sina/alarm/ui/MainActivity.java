@@ -298,6 +298,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     private void initView() {
         mTitleView = (TextView) findViewById(R.id.tv_item_title);
         mDescriptionView = (TextView) findViewById(R.id.tv_item_description);
+        mDescriptionView.setOnClickListener(this);
         mPlayButton = (ImageView) findViewById(R.id.iv_play_button);
         mPlayButton.setOnClickListener(this);
 
@@ -399,6 +400,9 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             case R.id.imv_settings:
                 SettingsActivity.startActivity(this);
                 break;
+            case R.id.tv_item_description:
+            	NewsContentActivity.startActivity(this, mCurrentItem.getId());
+            	break;
             default:
                 break;
         }
