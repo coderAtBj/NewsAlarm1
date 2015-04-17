@@ -117,7 +117,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
          * 
          * @param stateClass
          */
-        final protected void nextState(Class<? extends State> stateClass) {
+        final public void nextState(Class<? extends State> stateClass) {
             if (mStatePool.containsKey(stateClass)) {
                 mState = mStatePool.get(stateClass);
                 mState.onActivate();
@@ -273,11 +273,6 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         initData();
         setupActionBar();
         initView();
-
-        mState = new ReadyState();
-        if (mItems.size() > 0) {
-            mState.onSelectItem(mItems.get(0));
-        }
     }
 
     private void setupActionBar() {
@@ -314,8 +309,6 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         mShakeListener.setOnShakeListener(this);
 
         mPlayer = MediaManager.getInstance();
-        mPlayer.setOnCompletionListener(this);
-        mPlayer.setOnProgressChangeListener(this);
 
         mItems = new ArrayList<AudioNewsItem>(AppLauncher.getNewsItems());
     }
@@ -354,6 +347,22 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     protected void onResume() {
         super.onResume();
         mShakeListener.resume();
+
+        mPlayer.setOnCompletionListener(this);
+        mPlayer.setOnProgressChangeListener(this);
+
+        if (mState == null) {
+            mState = new ReadyState();
+            if (mItems.size() > 0) {
+                mState.onSelectItem(mItems.get(0));
+            }
+        } else {
+            if (mPlayer.isPrepared() && mPlayer.isPlaying()) {
+                mState.nextState(PlayingState.class);
+            } else {
+                mState.nextState(PausingState.class);
+            }
+        }
     }
 
     @Override

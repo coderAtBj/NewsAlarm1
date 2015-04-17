@@ -43,6 +43,7 @@ public class MediaManager {
 
     private MediaPlayer player;
     private boolean isPausing;
+    private boolean isPrepared = false;
 
     private OnProgressChangeListener progressListener;
     private Timer timer;
@@ -53,17 +54,20 @@ public class MediaManager {
     }
 
     private void startTimer() {
+        stopTimer();
+
         timer = new Timer();
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (progressListener == null) {
+                if (progressListener == null || !isPrepared()) {
                     return;
                 }
                 try {
                     progressListener.onProgressChange(player.getCurrentPosition(),
                             player.getDuration());
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };
@@ -94,13 +98,10 @@ public class MediaManager {
 
     public MediaManager setDataSource(Context context, Uri uri) {
         try {
-            player.stop();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            player.reset();
+            if (isPrepared) {
+                player.stop();
+                player.reset();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -108,11 +109,16 @@ public class MediaManager {
         try {
             player.setDataSource(context, uri);
             player.prepare();
+            isPrepared = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return this;
+    }
+
+    public boolean isPrepared() {
+        return isPrepared;
     }
 
     public boolean isPlaying() {
