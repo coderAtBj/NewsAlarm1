@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff" >
+
+    <include
+        android:id="@+id/action_bar"
+        layout="@layout/action_bar_layout" />
+    
+    <TextView
+        android:id="@+id/tv_news_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/action_bar"
+        android:layout_above="@+id/imv_divider"
+        android:background="#f1f1f1"
+        android:textSize="14sp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+         />
+    
+    <ImageView 
+	    android:id="@+id/imv_divider"
+	    android:layout_width="match_parent"
+	    android:layout_height="1dp"
+	    android:padding="10dp"
+	    android:background="#cecfd2"
+	    android:layout_above="@+id/rl_audio_pannel"
+		android:contentDescription="@string/default_desc"
+	    />
+    
+    <RelativeLayout 
+        android:id="@+id/rl_audio_pannel"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
+        >
+        <ImageView
+            android:id="@+id/imv_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play"
+            android:contentDescription="@string/default_desc"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            />
+        <TextView 
+            android:id="@+id/tv_played_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_played_time"
+            android:layout_toRightOf="@id/imv_play"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            android:textColor="#4fdc91"
+            />
+        <TextView 
+            android:id="@+id/tv_time_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time_divider"
+            android:layout_toRightOf="@id/tv_played_time"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            />
+        <TextView 
+            android:id="@+id/tv_total_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_played_time"
+            android:layout_toRightOf="@id/tv_time_divider"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            />
+        
+    </RelativeLayout>
+
+</RelativeLayout>

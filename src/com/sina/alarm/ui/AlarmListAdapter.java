@@ -3,7 +3,7 @@ package com.sina.alarm.ui;
 import java.util.List;
 
 import com.sina.alarm.R;
-import com.sina.alarm.db.AlarmModel;
+import com.sina.alarm.model.AlarmModel;
 
 import android.content.Context;
 import android.view.LayoutInflater;

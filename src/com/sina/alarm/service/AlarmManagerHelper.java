@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.sina.alarm.db.AlarmDBHelper;
-import com.sina.alarm.db.AlarmModel;
+import com.sina.alarm.model.AlarmModel;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">NewsAlarm</string>
+    <string name="app_name">新闻闹钟</string>
     <string name="details_alarm_name">Alarm Name</string>
     <string name="details_repeat_weekly">Repeat Weekly</string>
     <string name="details_sunday">Sunday</string>
@@ -15,8 +15,10 @@
     <string name="details_alarm_tone_default">Select an alarm tone</string>
     
     <string name="add_alarm">新建</string>
-    <string name="alarm_list">列表</string>
+    <string name="alarm_list">闹钟管理</string>
     <string name="save_alarm">保存</string>
+    <string name="default_played_time">00:00:00</string>
+    <string name="time_divider">/</string>
     
     <string name="default_desc">place hoder</string>
     

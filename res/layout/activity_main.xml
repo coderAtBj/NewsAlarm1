@@ -2,10 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    tools:context="com.sina.alarm.ui.MainActivity" >
-
-    <include
+    tools:context="com.sina.alarm.ui.MainActivity"
+    android:background="#ffffff" >
+     
+    <include 
         android:id="@+id/action_bar"
         layout="@layout/action_bar_layout" />
 

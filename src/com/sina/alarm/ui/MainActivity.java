@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
+import com.sina.alarm.R;
+import com.sina.alarm.app.Constants;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableStringBuilder;
@@ -22,8 +25,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.sina.alarm.R;
 import com.sina.alarm.bean.AudioNewsItem;
 import com.sina.alarm.ui.adapter.AudioListAdapter;
 
@@ -50,6 +51,16 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     private Handler mHandler;
     private Runnable mPlayRuntime;
 
+    public static void startActivity(Context ctx, long newsId) {
+        Intent intent = new Intent();
+        intent.setClass(ctx, MainActivity.class);
+        intent.putExtra(Constants.sNewsIdKey, newsId);
+        if (!(ctx instanceof Activity)) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        ctx.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +69,17 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         initData();
         setupActionBar();
         initView();
+    }
+
+    private void setupActionBar() {
+        ImageView imv = (ImageView) this.findViewById(R.id.imv_back);
+        imv.setVisibility(View.GONE);
+
+        imv = (ImageView) this.findViewById(R.id.imv_alarm);
+        imv.setOnClickListener(this);
+
+        imv = (ImageView) this.findViewById(R.id.imv_settings);
+        imv.setOnClickListener(this);
     }
 
     private void initView() {
@@ -79,11 +101,6 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             selectItem(mItems.get(0));
         }
 
-    }
-
-    private void setupActionBar() {
-        ImageView imv = (ImageView) this.findViewById(R.id.imv_back);
-        imv.setVisibility(View.GONE);
     }
 
     private void initData() {
@@ -171,19 +188,6 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     }
 
     @Override
-    public void onClick(View view) {
-        if (view == mPlayButton) {
-            if (mPlayer.isPlaying()) {
-                mPlayer.pause();
-            } else {
-                mPlayer.start();
-            }
-
-            updatePlayProgress();
-        }
-    }
-
-    @Override
     public void onCompletion(MediaPlayer mp) {
         int pos = mAudioList.getSelectedItemPosition();
         int next = (pos + 1) % mAudioList.getCount();
@@ -233,4 +237,28 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         return PLAY_TIME_FORMAT.format(new Date(time));
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.imv_alarm:
+                AlarmListActivity.startActvity(this);
+                break;
+            case R.id.imv_settings:
+                // TODO: tempory here.
+                NewsContentActivity.startActivity(this, 1);
+                break;
+            default:
+                break;
+        }
+
+        if (view == mPlayButton) {
+            if (mPlayer.isPlaying()) {
+                mPlayer.pause();
+            } else {
+                mPlayer.start();
+            }
+
+            updatePlayProgress();
+        }
+    }
 }

@@ -2,7 +2,7 @@ package com.sina.alarm.ui;
 
 import com.sina.alarm.R;
 import com.sina.alarm.db.AlarmDBHelper;
-import com.sina.alarm.db.AlarmModel;
+import com.sina.alarm.model.AlarmModel;
 import com.sina.alarm.service.AlarmManagerHelper;
 
 import android.app.AlertDialog;
@@ -73,9 +73,30 @@ public class AlarmListActivity extends ListActivity implements OnClickListener {
 			case R.id.imv_back:
 				this.finish();
 				break;
+			case R.id.imv_add_alarm:
+				startAlarmDetailActivity(-1);
+				break;
 			default:
 				break;
 		}
+	}
+	
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	// TODO Auto-generated method stub
+    	super.onActivityResult(requestCode, resultCode, data);
+    	
+    	if (resultCode == RESULT_OK) {
+    		mAdapter.setAlarms(dbHelper.getAlarms());
+    		mAdapter.notifyDataSetChanged();
+    	}
+    }
+	
+	private void startAlarmDetailActivity(long id) {
+		Intent intent = new Intent();
+		intent.setClass(this, AlarmDetailsActivity.class);
+		intent.putExtra("id", id);
+		this.startActivityForResult(intent, 0);
 	}
 
 	private void setupActionBar() {
@@ -87,6 +108,10 @@ public class AlarmListActivity extends ListActivity implements OnClickListener {
     	
     	imv = (ImageView)this.findViewById(R.id.imv_settings);
     	imv.setVisibility(View.GONE);
+    	
+    	imv = (ImageView)this.findViewById(R.id.imv_add_alarm);
+    	imv.setVisibility(View.VISIBLE);
+    	imv.setOnClickListener(this);
     	
     	TextView tv = (TextView)this.findViewById(R.id.tv_actionbar_title);
     	tv.setText(R.string.alarm_list);

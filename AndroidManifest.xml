@@ -12,6 +12,7 @@
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
+        android:name="com.sina.alarm.app.AppLauncher"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -34,6 +35,11 @@
         
         <activity
             android:name="com.sina.alarm.ui.AlarmListActivity"
+            android:screenOrientation="portrait"
+            />
+        
+        <activity 
+            android:name="com.sina.alarm.ui.NewsContentActivity"
             android:screenOrientation="portrait"
             />
         
