@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff" >
+    
+    <include
+        android:id="@+id/action_bar"
+        layout="@layout/action_bar_layout" />
+
+    <GridView
+        android:id="@+id/grid_channel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/action_bar"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="30dp"
+        android:cacheColorHint="@android:color/transparent"
+        android:fadingEdge="none"
+        android:fastScrollEnabled="false"
+        android:horizontalSpacing="4.5dp"
+        android:numColumns="3"
+        android:smoothScrollbar="true"
+        android:verticalSpacing="30dp" >
+    </GridView>
+    
+</LinearLayout>

@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,7 +44,8 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 	
 	private void setupActionBar() {
     	ImageView imv = (ImageView)this.findViewById(R.id.imv_back);
-    	imv.setVisibility(View.GONE);
+    	imv.setVisibility(View.VISIBLE);
+    	imv.setOnClickListener(this);
     	
     	imv = (ImageView)this.findViewById(R.id.imv_alarm);
     	imv.setVisibility(View.GONE);
@@ -79,6 +79,9 @@ public class NewsContentActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
+		case R.id.imv_back:
+			this.finish();
+			break;
 		case R.id.imv_settings:
 			//TODO:
 			break;

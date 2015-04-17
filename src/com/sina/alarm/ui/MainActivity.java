@@ -244,8 +244,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
                 AlarmListActivity.startActvity(this);
                 break;
             case R.id.imv_settings:
-                // TODO: tempory here.
-                NewsContentActivity.startActivity(this, 1);
+            	SettingsActivity.startActivity(this);
                 break;
             default:
                 break;
