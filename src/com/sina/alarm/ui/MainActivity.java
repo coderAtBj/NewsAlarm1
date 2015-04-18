@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
@@ -60,13 +59,14 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
          * 每次进入该状态时调用
          */
         public void onActivate() {
+            log("onActivate");
         }
 
         /**
          * 播放按钮被点击事件
          */
         public void onClickPlayButton() {
-            Util.logd(this.getClass().getSimpleName() + "." + "onClickPlayButton");
+            log("onClickPlayButton");
         }
 
         /**
@@ -77,6 +77,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         }
 
         public void onCompletion() {
+            log("onCompletion");
             playNext(false);
         }
 
@@ -86,7 +87,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
          * @param item
          */
         public void onSelectItem(AudioNewsItem item) {
-            Util.logd(this.getClass().getSimpleName() + "." + "onSelectItem");
+            log("onSelectItem");
 
             mCurrentItem = item;
             mTitleView.setText(item.getTitle());
@@ -106,24 +107,28 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
 
         @Override
         public void onShake() {
+            log("onShake");
         }
 
         @Override
         public void onFaceUp() {
+            log("onFaceUp");
         }
 
         @Override
         public void onFaceDown() {
+            log("onFaceDown");
         }
 
         public void onActivityPause() {
+            log("onActivityDestroy");
         }
 
         /**
          * Activity销毁事件
          */
         public void onActivityDestroy() {
-            Util.logd(this.getClass().getSimpleName() + "." + "onActivityDestroy");
+            log("onActivityDestroy");
 
             mPlayer.stop();
             mPlayer.release();
@@ -176,6 +181,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             width = height = Math.min(width, height);
 
             Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+
             Canvas canvas = new Canvas();
             canvas.setBitmap(bitmap);
 
@@ -189,6 +195,10 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
 
             mPlayButtonBacking.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+        }
+
+        protected void log(String msg) {
+            Util.logd(this.getClass().getSimpleName() + ":" + msg);
         }
     }
 
@@ -261,6 +271,12 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         public void onActivityPause() {
             super.onActivityPause();
             nextState(BlurredPlayingState.class);
+        }
+
+        @Override
+        public void onCompletion() {
+            nextState(PausingState.class);
+            super.onCompletion();
         }
     }
 
