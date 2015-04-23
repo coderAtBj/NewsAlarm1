@@ -42,6 +42,7 @@ import com.sina.alarm.sensor.ShakeListener;
 import com.sina.alarm.sensor.ShakeListener.OnShakeListener;
 import com.sina.alarm.service.AlarmManagerHelper;
 import com.sina.alarm.ui.adapter.AudioListAdapter;
+import com.sina.alarm.ui.view.RadarRelativeLayout;
 import com.sina.alarm.util.Util;
 
 public class MainActivity extends Activity implements OnClickListener, OnItemClickListener,
@@ -166,35 +167,8 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
             updatePlayButtonBacking();
         }
 
-        @SuppressWarnings("deprecation")
         private void updatePlayButtonBacking() {
-            int startAngle = 270;
-            int sweepAngle = (int) (360.0 * mPlayer.getProgress() / mPlayer.getDuration());
-
-            int width = mPlayButtonBacking.getWidth();
-            int height = mPlayButtonBacking.getHeight();
-
-            if (width <= 0 || height <= 0) {
-                return;
-            }
-
-            width = height = Math.min(width, height);
-
-            Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-
-            Canvas canvas = new Canvas();
-            canvas.setBitmap(bitmap);
-
-            RectF rect = new RectF(0, 0, width, height);
-
-            Paint paint = new Paint();
-            paint.setAntiAlias(true);
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(getResources().getColor(R.color.play_button_backing_color));
-
-            canvas.drawArc(rect, startAngle, sweepAngle, true, paint);
-
-            mPlayButtonBacking.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+            mPlayButtonBacking.setAngle(270, (int) (360.0 * mPlayer.getProgress() / mPlayer.getDuration()));
         }
 
         protected void log(String msg) {
@@ -330,7 +304,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
     private TextView mTitleView;
     private TextView mDescriptionView;
     private ImageView mPlayButton;
-    private View mPlayButtonBacking;
+    private RadarRelativeLayout mPlayButtonBacking;
     private TextView mPlayProgress;
     private TextView mPlayDuration;
     private ListView mAudioList;
@@ -376,7 +350,7 @@ public class MainActivity extends Activity implements OnClickListener, OnItemCli
         mDescriptionView.setOnClickListener(this);
         mPlayButton = (ImageView) findViewById(R.id.iv_play_button);
         mPlayButton.setOnClickListener(this);
-        mPlayButtonBacking = findViewById(R.id.iv_play_button_backing);
+        mPlayButtonBacking = (RadarRelativeLayout) findViewById(R.id.iv_play_button_backing);
 
         mPlayProgress = (TextView) findViewById(R.id.tv_play_progress);
         mPlayDuration = (TextView) findViewById(R.id.tv_play_duration);
